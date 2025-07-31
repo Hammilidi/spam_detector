@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pickle
 import pandas as pd
@@ -52,9 +51,9 @@ def preprocess_text(text):
 def load_models():
     """Chargement des modèles sauvegardés"""
     try:
-        with open('spam_detection_model.pkl', 'rb') as f:
+        with open('models/spam_detection_model.pkl', 'rb') as f:
             model = pickle.load(f)
-        with open('tfidf_vectorizer.pkl', 'rb') as f:
+        with open('models/tfidf_vectorizer.pkl', 'rb') as f:
             vectorizer = pickle.load(f)
         return model, vectorizer
     except Exception as e:
@@ -141,18 +140,18 @@ def main():
         malveillants et protéger vos communications.
         """)
 
-        # Métriques de performance
-        st.subheader("📈 Performances du Modèle")
+        # Métriques de performance basées sur les graphiques fournis
+        st.subheader("📈 Performances des Modèles")
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
-            st.metric("🎯 Accuracy", "98.97%", "↗️ +2.1%")
+            st.metric("🎯 Accuracy (SVM)", "98.7%", "↗️ Meilleur")
         with col2:
-            st.metric("🔍 Precision", "98.8%", "↗️ +1.8%")
+            st.metric("🔍 Precision (SVM)", "98.2%", "↗️ Excellent")
         with col3:
-            st.metric("📡 Recall", "98.6%", "↗️ +2.3%")
+            st.metric("📡 Recall (SVM)", "99.4%", "↗️ Optimal")
         with col4:
-            st.metric("⚖️ F1-Score", "98.97%", "↗️ +2.0%")
+            st.metric("⚖️ F1-Score (SVM)", "98.8%", "↗️ Top")
 
         # Fonctionnalités
         st.subheader("🛠️ Fonctionnalités")
@@ -171,18 +170,18 @@ def main():
         with col2:
             st.write("""
             **🤖 Algorithmes Utilisés:**
-            - Decision Trees optimisés
+            - Support Vector Machine (SVM) - **Recommandé**
             - Naive Bayes Multinomial
-            - Support Vector Machines
-            - Validation croisée
+            - Decision Trees optimisés
+            - Validation croisée 5-fold
             """)
 
         # Instructions
         st.subheader("🚀 Comment utiliser l'application")
         st.write("""
         1. **📧 Détection** : Analysez un email en temps réel
-        2. **📊 Statistiques** : Consultez les performances détaillées
-        3. **🔍 Analyse** : Explorez les données et visualisations
+        2. **📊 Statistiques** : Consultez les performances détaillées des 3 modèles
+        3. **🔍 Analyse** : Explorez les patterns dans les données (wordclouds, distributions)
         4. **ℹ️ À propos** : Découvrez les détails techniques
         """)
 
@@ -204,21 +203,20 @@ def main():
 
         with col1:
             if st.button("📧 Email Légitime", type="secondary"):
-                email_text = st.text_area(
-                    "📝 Contenu de l'email :",
-                    value="Hello team, I wanted to remind you about our meeting tomorrow at 3 PM in conference room A. Please bring your quarterly reports and be prepared to discuss the upcoming project milestones. Looking forward to seeing everyone there. Best regards, John",
-                    height=200,
-                    key="legit_email"
-                )
+                st.session_state.email_example = "Hello team, I wanted to remind you about our meeting tomorrow at 3 PM in conference room A. Please bring your quarterly reports and be prepared to discuss the upcoming project milestones. Looking forward to seeing everyone there. Best regards, John"
 
         with col2:
             if st.button("🚨 Email Suspect", type="secondary"):
-                email_text = st.text_area(
-                    "📝 Contenu de l'email :",
-                    value="URGENT! CONGRATULATIONS! You have won $1,000,000 in our international lottery! Send your bank details immediately to claim your prize. Act now before this offer expires! Click here to claim your money now!",
-                    height=200,
-                    key="spam_email"
-                )
+                st.session_state.email_example = "URGENT! CONGRATULATIONS! You have won $1,000,000 in our international lottery! Send your bank details immediately to claim your prize. Act now before this offer expires! Click here to claim your money now!"
+
+        # Afficher l'exemple sélectionné
+        if 'email_example' in st.session_state:
+            email_text = st.text_area(
+                "📝 Contenu de l'email (exemple sélectionné) :",
+                value=st.session_state.email_example,
+                height=200,
+                key="email_content"
+            )
 
         # Bouton d'analyse
         if st.button("🔍 Analyser l'Email", type="primary"):
@@ -313,191 +311,176 @@ def main():
                 st.warning("⚠️ Veuillez saisir un email à analyser.")
 
     elif page == "📊 Statistiques":
-        st.header("📊 Performances et Statistiques du Modèle")
+        st.header("📊 Performances et Statistiques des Modèles")
 
-        # Métriques détaillées
-        st.subheader("🎯 Métriques de Performance")
+        # Interprétation des résultats basée sur les graphiques
+        st.subheader("🎯 Analyse Comparative des Modèles")
+        
+        st.write("""
+        Basé sur l'analyse des performances des trois modèles testés, voici les résultats détaillés :
+        """)
 
-        # Simulation de données de performance (à remplacer par vos vraies données)
-        metrics_data = {
-            'Métrique': ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'Specificity'],
-            'Score': [0.99, 0.98, 0.98, 0.99, 0.948],
-            'Amélioration': ['+2.1%', '+1.8%', '+2.3%', '+2.0%', '+1.9%']
-        }
+        # Métriques détaillées avec interprétation
+        st.subheader("📈 Résultats de Performance")
 
-        metrics_df = pd.DataFrame(metrics_data)
-        st.dataframe(metrics_df, use_container_width=True)
-
-        # Graphique des performances
-        fig, ax = plt.subplots(figsize=(10, 6))
-        bars = ax.bar(metrics_df['Métrique'], metrics_df['Score'], 
-                     color=['skyblue', 'lightgreen', 'lightcoral', 'gold', 'plum'], alpha=0.8)
-
-        ax.set_ylabel('Score')
-        ax.set_title('Performances du Modèle de Détection de Spam')
-        ax.set_ylim(0, 1)
-        ax.grid(axis='y', alpha=0.3)
-
-        # Ajout des valeurs sur les barres
-        for bar, score in zip(bars, metrics_df['Score']):
-            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
-                   f'{score:.1%}', ha='center', va='bottom', fontweight='bold')
-
-        st.pyplot(fig)
-        plt.close()
-
-        # Matrice de confusion simulée
-        st.subheader("🔍 Matrice de Confusion")
-
-        col1, col2 = st.columns([1, 1])
+        col1, col2, col3 = st.columns(3)
 
         with col1:
-            # Données simulées pour la matrice de confusion
-            cm_data = np.array([[85, 5], [3, 87]])
-
-            fig, ax = plt.subplots(figsize=(6, 5))
-            sns.heatmap(cm_data, annot=True, fmt='d', cmap='Blues', ax=ax,
-                       xticklabels=['Ham', 'Spam'], yticklabels=['Ham', 'Spam'])
-            ax.set_xlabel('Prédictions')
-            ax.set_ylabel('Vraies Valeurs')
-            ax.set_title('Matrice de Confusion')
-
-            st.pyplot(fig)
-            plt.close()
+            st.markdown("### 🌳 Decision Tree")
+            st.metric("Accuracy", "95.6%")
+            st.metric("Precision", "96.1%") 
+            st.metric("Recall", "95.9%")
+            st.metric("F1-Score", "96.0%")
 
         with col2:
-            st.markdown("""
-            **📈 Interprétation :**
+            st.markdown("### 📊 Naive Bayes")
+            st.metric("Accuracy", "98.1%")
+            st.metric("Precision", "97.7%")
+            st.metric("Recall", "98.7%") 
+            st.metric("F1-Score", "98.2%")
 
-            - **Vrais Positifs (TP):** 87 spams correctement identifiés
-            - **Vrais Négatifs (TN):** 85 emails légitimes correctement identifiés  
-            - **Faux Positifs (FP):** 5 emails légitimes classés comme spam
-            - **Faux Négatifs (FN):** 3 spams manqués
+        with col3:
+            st.markdown("### 🎯 SVM (Recommandé)")
+            st.metric("Accuracy", "98.7%", "🏆")
+            st.metric("Precision", "98.2%", "🏆")
+            st.metric("Recall", "99.4%", "🏆") 
+            st.metric("F1-Score", "98.8%", "🏆")
 
-            **🎯 Taux d'erreur très faible :** 4.4%
-            """)
+        # Graphique de comparaison des performances
+        st.subheader("📊 Comparaison Visuelle des Performances")
+        try:
+            st.image("plots/comparaison_performances_models.png", 
+                    caption="Comparaison des métriques de performance entre les trois modèles", 
+                    use_container_width=True)
+        except:
+            st.info("Graphique de comparaison non disponible. Veuillez vérifier le fichier.")
 
-        # Évolution des performances
-        st.subheader("📈 Évolution des Performances")
+        # Validation croisée
+        st.subheader("🔄 Validation Croisée")
+        st.write("""
+        **Analyse de la stabilité des modèles :**
+        - **Decision Tree** : 95.6% ± 0.002 (Stable mais performance plus faible)
+        - **Naive Bayes** : 98.1% ± 0.001 (Très stable et performant)
+        - **SVM** : 98.7% ± 0.001 (Le plus stable ET le plus performant)
+        """)
 
-        # Données simulées d'évolution
-        dates = pd.date_range('2024-01-01', periods=12, freq='M')
-        performance_data = {
-            'Date': dates,
-            'Accuracy': [0.89, 0.91, 0.92, 0.93, 0.94, 0.945, 0.948, 0.95, 0.951, 0.952, 0.952, 0.952],
-            'F1-Score': [0.88, 0.90, 0.91, 0.92, 0.93, 0.94, 0.946, 0.948, 0.950, 0.951, 0.952, 0.952]
-        }
+        try:
+            st.image("plots/confusion_models.png", 
+                    caption="Matrices de confusion pour les trois modèles", 
+                    use_container_width=True)
+        except:
+            st.info("Matrices de confusion non disponibles. Veuillez vérifier le fichier.")
 
-        perf_df = pd.DataFrame(performance_data)
+        # Interprétation des matrices de confusion
+        st.subheader("🔍 Analyse des Matrices de Confusion")
+        
+        st.write("""
+        **Observations clés :**
+        
+        1. **SVM** montre les meilleures performances avec :
+           - Très peu de faux positifs (80 emails légitimes classés comme spam)
+           - Très peu de faux négatifs (21 spams non détectés)
+           - Meilleur équilibre global
+        
+        2. **Naive Bayes** :
+           - Performance solide avec 76 faux positifs et 43 faux négatifs
+           - Bon compromis entre précision et rappel
+        
+        3. **Decision Tree** :
+           - Plus de faux positifs (125) et faux négatifs (134)
+           - Performance inférieure mais toujours acceptable
+        """)
 
-        fig, ax = plt.subplots(figsize=(12, 6))
-        ax.plot(perf_df['Date'], perf_df['Accuracy'], marker='o', label='Accuracy', linewidth=2)
-        ax.plot(perf_df['Date'], perf_df['F1-Score'], marker='s', label='F1-Score', linewidth=2)
-
-        ax.set_xlabel('Date')
-        ax.set_ylabel('Score')
-        ax.set_title('Évolution des Performances du Modèle')
-        ax.legend()
-        ax.grid(True, alpha=0.3)
-        ax.set_ylim(0.85, 1.0)
-
-        plt.xticks(rotation=45)
-        st.pyplot(fig)
-        plt.close()
+        # Recommandation
+        st.success("""
+        **🏆 Recommandation :** Le modèle **SVM** est recommandé pour la production grâce à :
+        - Sa précision exceptionnelle (98.7%)
+        - Son excellent rappel (99.4% - détecte presque tous les spams)
+        - Sa stabilité en validation croisée
+        """)
 
     elif page == "🔍 Analyse":
         st.header("🔍 Analyse Exploratoire et Visualisations")
 
-        # Nuages de mots simulés
-        st.subheader("☁️ Nuages de Mots")
+        # Nuages de mots
+        st.subheader("☁️ Analyse des Mots Fréquents")
+        
+        st.write("""
+        Les nuages de mots révèlent les patterns linguistiques distinctifs entre 
+        les emails légitimes et les spams :
+        """)
 
+        try:
+            st.image("plots/word_cloud.png", 
+                    caption="Comparaison des mots fréquents : SPAM vs Emails Légitimes", 
+                    use_container_width=True)
+        except:
+            st.info("Nuages de mots non disponibles. Veuillez vérifier le fichier.")
+
+        # Interprétation des word clouds
+        st.subheader("📝 Interprétation des Patterns Linguistiques")
+        
         col1, col2 = st.columns(2)
-
+        
         with col1:
-            st.markdown("**🚨 Mots Fréquents dans les SPAMS**")
-
-            # Mots typiques des spams
-            spam_words = """
-                money free win urgent click now limited offer prize
-                congratulations winner lottery million dollars cash
-                urgent action required immediately expire act fast
-                guaranteed income work home easy money rich quick
-            """
-
-            if spam_words.strip():
-                wordcloud_spam = WordCloud(width=400, height=300, 
-                                          background_color='white',
-                                          colormap='Reds').generate(spam_words)
-
-                fig, ax = plt.subplots(figsize=(8, 6))
-                ax.imshow(wordcloud_spam, interpolation='bilinear')
-                ax.axis('off')
-                st.pyplot(fig)
-                plt.close()
-
+            st.markdown("#### 🚨 Mots Typiques des SPAMS")
+            st.write("""
+            - **"money", "make", "win"** : Promesses financières
+            - **"free", "offer", "company"** : Offres trop belles
+            - **"want", "need", "one"** : Langage urgent/pressant
+            - **"email", "business"** : Contexte commercial agressif
+            """)
+            
         with col2:
-            st.markdown("**✅ Mots Fréquents dans les emails LÉGITIMES**")
-
-            # Mots typiques des emails légitimes
-            ham_words = """
-                meeting team project report schedule work office
-                please thank regards best wishes hello dear
-                attached document file information update news
-                conference call discussion agenda deadline task
-            """
-
-            if ham_words.strip():
-                wordcloud_ham = WordCloud(width=400, height=300,
-                                         background_color='white',
-                                         colormap='Greens').generate(ham_words)
-
-                fig, ax = plt.subplots(figsize=(8, 6))
-                ax.imshow(wordcloud_ham, interpolation='bilinear')
-                ax.axis('off')
-                st.pyplot(fig)
-                plt.close()
+            st.markdown("#### ✅ Mots Typiques des Emails Légitimes")
+            st.write("""
+            - **"enron", "energy", "gas"** : Contexte professionnel spécifique
+            - **"meet", "time", "work"** : Communication d'entreprise
+            - **"thank", "question", "help"** : Ton poli et collaboratif
+            - **"project", "business"** : Discussions professionnelles
+            """)
 
         # Distribution des longueurs
-        st.subheader("📏 Distribution des Longueurs de Texte")
+        st.subheader("📏 Analyse des Caractéristiques Textuelles")
+        
+        try:
+            st.image("plots/distribution.png", 
+                    caption="Distribution des longueurs de texte et nombre de mots par classe", 
+                    use_container_width=True)
+        except:
+            st.info("Graphiques de distribution non disponibles. Veuillez vérifier le fichier.")
 
-        # Données simulées
-        spam_lengths = np.random.normal(150, 50, 100)
-        ham_lengths = np.random.normal(200, 80, 100)
+        # Interprétation des distributions
+        st.subheader("📊 Insights sur les Caractéristiques Textuelles")
+        
+        st.write("""
+        **Observations importantes :**
+        
+        1. **Longueur des textes :**
+           - Les emails **légitimes** sont généralement plus longs (~1650 caractères en moyenne)
+           - Les **spams** sont plus courts (~1350 caractères) mais plus variables
+        
+        2. **Nombre de mots :**
+           - Les emails **légitimes** contiennent plus de mots (~350 mots)
+           - Les **spams** sont plus concis (~260 mots) pour un impact rapide
+        
+        3. **Implications pour la détection :**
+           - La longueur peut être un indicateur utile
+           - Les spams privilégient la concision et l'impact
+           - Les emails légitimes tendent vers plus de détails
+        """)
 
-        fig, ax = plt.subplots(figsize=(12, 6))
-
-        ax.hist(ham_lengths, bins=20, alpha=0.7, label='Emails Légitimes', color='green')
-        ax.hist(spam_lengths, bins=20, alpha=0.7, label='Spams', color='red')
-
-        ax.set_xlabel('Longueur du texte (mots)')
-        ax.set_ylabel('Fréquence')
-        ax.set_title('Distribution des Longueurs de Texte par Classe')
-        ax.legend()
-        ax.grid(True, alpha=0.3)
-
-        st.pyplot(fig)
-        plt.close()
-
-        # Top mots caractéristiques
-        st.subheader("🔤 Mots les Plus Caractéristiques")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.markdown("**🚨 Top Mots SPAM**")
-            spam_features = pd.DataFrame({
-                'Mot': ['free', 'money', 'win', 'urgent', 'click', 'now', 'offer', 'prize'],
-                'Score TF-IDF': [0.89, 0.87, 0.85, 0.83, 0.81, 0.79, 0.77, 0.75]
-            })
-            st.dataframe(spam_features, use_container_width=True)
-
-        with col2:
-            st.markdown("**✅ Top Mots LÉGITIMES**")
-            ham_features = pd.DataFrame({
-                'Mot': ['meeting', 'team', 'project', 'please', 'attached', 'regards', 'schedule', 'report'],
-                'Score TF-IDF': [0.78, 0.76, 0.74, 0.72, 0.70, 0.68, 0.66, 0.64]
-            })
-            st.dataframe(ham_features, use_container_width=True)
+        # Features importantes
+        st.subheader("🔍 Features les Plus Discriminantes")
+        
+        st.write("""
+        **Caractéristiques clés identifiées par les modèles :**
+        
+        - **Vocabulaire financier** : "money", "win", "prize", "cash"
+        - **Urgence artificielle** : "urgent", "act now", "limited time"
+        - **Formulations suspectes** : "click here", "free", "guarantee"
+        - **Ton professionnel vs commercial** : Différence marquée dans le registre de langue
+        """)
 
     elif page == "ℹ️ À propos":
         st.header("ℹ️ À Propos du Projet")
@@ -523,10 +506,10 @@ def main():
         - Matrice de 5000 caractéristiques maximum
         - Support des unigrammes et bigrammes
 
-        ### **Modèles Testés**
-        - **Decision Tree Classifier** avec optimisation des hyperparamètres
-        - **Naive Bayes Multinomial** pour la classification de texte
-        - **Support Vector Machine** avec noyau linéaire
+        ### **Modèles Testés et Résultats**
+        - **Support Vector Machine (SVM)** : 98.7% accuracy - **Modèle sélectionné**
+        - **Naive Bayes Multinomial** : 98.1% accuracy - Très bon second choix
+        - **Decision Tree Classifier** : 95.6% accuracy - Performance acceptable
 
         ### **Validation et Optimisation**
         - Validation croisée 5-fold
@@ -536,7 +519,7 @@ def main():
         ## 📊 Architecture du Système
 
         ```
-        Email Input → Preprocessing → TF-IDF → ML Model → Classification
+        Email Input → Preprocessing → TF-IDF → SVM Model → Classification
                          ↓              ↓         ↓           ↓
                     Tokenization   Vectorization  Prediction  Result
                     Stemming       Feature         Probability  Confidence
@@ -553,14 +536,21 @@ def main():
         - **Matplotlib/Seaborn** : Visualisations
         - **WordCloud** : Nuages de mots
 
-        ## 📈 Performances Atteintes
+        ## 📈 Performances Finales (Modèle SVM)
 
-        | Métrique | Score | Amélioration |
-        |----------|-------|-------------|
-        | Accuracy | 95.2% | +2.1% |
-        | Precision | 94.8% | +1.8% |
-        | Recall | 95.6% | +2.3% |
-        | F1-Score | 95.2% | +2.0% |
+        | Métrique | Score | Interprétation |
+        |----------|-------|----------------|
+        | Accuracy | 98.7% | Excellent taux de classification correcte |
+        | Precision | 98.2% | Très peu de faux positifs |
+        | Recall | 99.4% | Détecte presque tous les spams |
+        | F1-Score | 98.8% | Excellent équilibre précision/rappel |
+
+        ## 🔍 Insights Clés du Projet
+
+        1. **Le modèle SVM s'est révélé supérieur** aux autres approches
+        2. **Les spams utilisent un vocabulaire financier spécifique** ("money", "win", "free")
+        3. **Les emails légitimes sont généralement plus longs** et détaillés
+        4. **La validation croisée confirme la stabilité** des performances
 
         ## 🚀 Perspectives d'Amélioration
 
@@ -573,13 +563,13 @@ def main():
 
         **BMSecurity - Intelligence Artificielle Team**
 
-        *Ce projet a été réalisé avec passion et expertise pour protéger 
+        *Ce projet a été réalisé avec passion ❤️ et expertise pour protéger 
         vos communications contre les menaces numériques.*
 
         ---
 
-        📧 **Contact :** yonli.fidele@bmsecurity.com  
-        🌐 **Website :** www.bmsecurity.com  
+        📧 **Contact :** yonlifidelis2@gmail.com  
+        🌐 **LinkedIn :** www.linkedin.com/in/yonlifidele 
         📅 **Version :** 1.0.0 (2025)
         """)
 
