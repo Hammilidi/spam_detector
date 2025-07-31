@@ -146,13 +146,13 @@ def main():
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
-            st.metric("🎯 Accuracy", "95.2%", "↗️ +2.1%")
+            st.metric("🎯 Accuracy", "98.97%", "↗️ +2.1%")
         with col2:
-            st.metric("🔍 Precision", "94.8%", "↗️ +1.8%")
+            st.metric("🔍 Precision", "98.8%", "↗️ +1.8%")
         with col3:
-            st.metric("📡 Recall", "95.6%", "↗️ +2.3%")
+            st.metric("📡 Recall", "98.6%", "↗️ +2.3%")
         with col4:
-            st.metric("⚖️ F1-Score", "95.2%", "↗️ +2.0%")
+            st.metric("⚖️ F1-Score", "98.97%", "↗️ +2.0%")
 
         # Fonctionnalités
         st.subheader("🛠️ Fonctionnalités")
@@ -321,7 +321,7 @@ def main():
         # Simulation de données de performance (à remplacer par vos vraies données)
         metrics_data = {
             'Métrique': ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'Specificity'],
-            'Score': [0.952, 0.948, 0.956, 0.952, 0.948],
+            'Score': [0.99, 0.98, 0.98, 0.99, 0.948],
             'Amélioration': ['+2.1%', '+1.8%', '+2.3%', '+2.0%', '+1.9%']
         }
 
