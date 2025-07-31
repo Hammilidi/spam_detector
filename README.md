@@ -9,6 +9,9 @@
 
 **BMSecurity Spam Detection System** est une solution intelligente de détection automatique de spam utilisant des techniques avancées de **Machine Learning** et de **Traitement du Langage Naturel (NLP)**. Ce système a été développé pour renforcer la sécurité des communications électroniques et peut être intégré aux plateformes de messagerie existantes.
 
+![Interface BMSecurity Spam Detection System](media/interface.png)
+
+
 ### 🎯 Objectifs du Projet
 
 - Détecter automatiquement les emails malveillants avec une précision élevée
@@ -111,11 +114,8 @@ spams_detection/
 
 ### 2. Modèles Implémentés
 
-| Algorithme | Accuracy | Precision | Recall | F1-Score |
-|-----------|----------|-----------|--------|----------|
-| **Decision Tree** | 95.2% | 94.8% | 95.6% | 95.2% |
-| Naive Bayes | 93.1% | 92.5% | 93.8% | 93.1% |
-| SVM | 94.7% | 94.2% | 95.1% | 94.6% |
+![Modèles Implémentés](plots/comparaison_performances_models.png)
+
 
 ### 3. Optimisation des Hyperparamètres
 - **GridSearchCV** pour la recherche exhaustive
@@ -125,23 +125,14 @@ spams_detection/
 ## 📊 Performances du Système
 
 ### Métriques Principales
-- **🎯 Accuracy :** 98.2% (+2.1% d'amélioration)
-- **🔍 Precision :** 98.8% (+1.8% d'amélioration)
-- **📡 Recall :** 98.6% (+2.3% d'amélioration)
-- **⚖️ F1-Score :** 98.2% (+2.0% d'amélioration)
+
+![Meilleur Modèle](media/best_model.png)
+
 
 ### Matrice de Confusion
-```
-                Prédictions
-Réalité    Ham    Spam
-  Ham      850     50
-  Spam      30     870
-```
 
-### Temps de Réponse
-- **Prétraitement :** ~0.02s par email
-- **Classification :** ~0.01s par email
-- **Total :** <0.05s par email
+![Matrice de Confusion](plots/confusion_models.png)
+
 
 ## 🖥️ Guide d'Utilisation
 
