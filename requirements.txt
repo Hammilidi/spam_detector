@@ -5,3 +5,6 @@ seaborn
 wordcloud
 nltk
 numpy
+dash
+pickle
+
