@@ -110,12 +110,12 @@ def predict_spam(text, model, vectorizer):
         }
 
 
-model = joblib.load("models/spam_detection_model.pkl")
+model = joblib.load("../models/spam_detection_model.pkl")
 vectorizer = joblib.load("models/tfidf_vectorizer.pkl")
 # preprocessor = preprocess_text(text)
 # predictor = predict_spam(model, vectorizer, preprocessor)
 
-df = pd.read_csv("data/DataSet_Emails.csv")
+df = pd.read_csv("../data/DataSet_Emails.csv")
 df["text"] = df["text"].fillna("")
 df["length"] = df["text"].apply(lambda x: len(str(x)))
 

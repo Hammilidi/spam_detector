@@ -51,9 +51,9 @@ def preprocess_text(text):
 def load_models():
     """Chargement des modèles sauvegardés"""
     try:
-        with open('models/spam_detection_model.pkl', 'rb') as f:
+        with open('../models/spam_detection_model.pkl', 'rb') as f:
             model = pickle.load(f)
-        with open('models/tfidf_vectorizer.pkl', 'rb') as f:
+        with open('../models/tfidf_vectorizer.pkl', 'rb') as f:
             vectorizer = pickle.load(f)
         return model, vectorizer
     except Exception as e:
